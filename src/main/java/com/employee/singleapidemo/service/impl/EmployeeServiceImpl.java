@@ -1,17 +1,21 @@
 package com.employee.singleapidemo.service.impl;
 
 import com.employee.singleapidemo.entity.EmployeeEntity;
+import com.employee.singleapidemo.exception.EmployeeNotFoundException;
 import com.employee.singleapidemo.payload.EmployeeDTO;
 import com.employee.singleapidemo.repository.EmployeeRepository;
 import com.employee.singleapidemo.service.EmployeeService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
     private EmployeeRepository employeeRepository;
+    private static final String EMPLOYEE_NOT_FOUND = "Employee not available in Database";
 
     public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
@@ -26,23 +30,34 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeeDTO getEmployee(int employeeId) {
-        EmployeeEntity employeeEntity = employeeRepository.findById(employeeId).orElseThrow();
+        EmployeeEntity employeeEntity = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new EmployeeNotFoundException(HttpStatus.NOT_FOUND, EMPLOYEE_NOT_FOUND));
         return mapToDTO(employeeEntity);
     }
 
     @Override
-    public List<EmployeeDTO> getAllEmployees(EmployeeDTO employeeDto) {
-        return null;
+    public List<EmployeeDTO> getAllEmployees() {
+        return employeeRepository.findAll()
+                .stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public EmployeeDTO updateEmployee(EmployeeDTO employeeDto) {
-        return null;
+    public String updateEmployee(EmployeeDTO employeeDto) {
+        EmployeeEntity employeeEntity = employeeRepository.findById(employeeDto.employeeId())
+                .orElseThrow(() -> new EmployeeNotFoundException(HttpStatus.NOT_FOUND, EMPLOYEE_NOT_FOUND));
+        employeeEntity.employeeName = employeeDto.employeeName();
+        employeeRepository.save(employeeEntity);
+        return "Employ name updated successfully";
     }
 
     @Override
-    public EmployeeDTO deleteEmployee(int employeeId) {
-        return null;
+    public String deleteEmployee(int employeeId) {
+        EmployeeEntity employeeEntity = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new EmployeeNotFoundException(HttpStatus.NOT_FOUND, EMPLOYEE_NOT_FOUND));
+        employeeRepository.delete(employeeEntity);
+        return "Employee deleted successfully";
     }
 
     public EmployeeDTO mapToDTO(EmployeeEntity employeeEntity) {

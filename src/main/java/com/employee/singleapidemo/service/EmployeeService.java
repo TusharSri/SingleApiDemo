@@ -9,9 +9,9 @@ public interface EmployeeService {
 
     EmployeeDTO getEmployee(int employeeId);
 
-    List<EmployeeDTO> getAllEmployees(EmployeeDTO employeeDto);
+    List<EmployeeDTO> getAllEmployees();
 
-    EmployeeDTO updateEmployee(EmployeeDTO employeeDto);
+    String updateEmployee(EmployeeDTO employeeDto);
 
-    EmployeeDTO deleteEmployee(int employeeId);
+    String deleteEmployee(int employeeId);
 }
