@@ -61,10 +61,20 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     public EmployeeDTO mapToDTO(EmployeeEntity employeeEntity) {
-        return new EmployeeDTO(employeeEntity.employeeId, employeeEntity.employeeName);
+        return new EmployeeDTO(employeeEntity.getEmployeeId(),
+                employeeEntity.getEmployeeName(),
+                employeeEntity.getEmployeeUserName(),
+                employeeEntity.getEmployeeEmail(),
+                employeeEntity.getEmployeePassword(),
+                employeeEntity.getEmployeeRole());
     }
 
     public EmployeeEntity mapToEntity(EmployeeDTO employeeDto) {
-        return new EmployeeEntity(employeeDto.employeeId(), employeeDto.employeeName());
+        return new EmployeeEntity(employeeDto.employeeId()
+                , employeeDto.employeeName()
+                , employeeDto.employeeUsername()
+                , employeeDto.employeeEmail()
+                , employeeDto.employeePassword()
+                , employeeDto.employeeRole());
     }
 }
